@@ -16,4 +16,5 @@ export interface UserState {
   accountId?: string;
   certification?: number;
   role: RoleType;
+  shopId?: string;
 }

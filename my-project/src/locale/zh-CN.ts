@@ -40,6 +40,8 @@ export default {
   'menu.profile': '详情页',
   'menu.visualization': '数据可视化',
   'menu.user': '个人中心',
+  'menu.goods': '商品管理',
+  'menu.goods.list': '商品列表',
   'navbar.docs': '文档中心',
   'navbar.action.locale': '切换为中文',
   ...localeSettings,
