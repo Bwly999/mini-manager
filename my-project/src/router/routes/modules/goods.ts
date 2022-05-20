@@ -22,11 +22,11 @@ export default {
       },
     },
     {
-      path: 'card',
-      name: 'Card',
-      component: () => import('@/views/list/card/index.vue'),
+      path: 'onshelf',
+      name: 'GoodsOnshelf',
+      component: () => import('@/views/goods/onshelf/index.vue'),
       meta: {
-        locale: 'menu.list.cardList',
+        locale: 'menu.goods.onshelf',
         requiresAuth: true,
         roles: ['*'],
       },

@@ -72,3 +72,11 @@ setupMock({
     });
   },
 });
+
+setupMock({
+  setup() {
+    Mock.mock(new RegExp('/goods/file'), () => {
+      return successResponseWrap(Random.url('http'));
+    });
+  },
+});

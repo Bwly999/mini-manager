@@ -15,6 +15,9 @@ import '@arco-design/web-vue/dist/arco.css';
 import '@/assets/style/global.less';
 import '@/api/interceptor';
 
+// eslint-disable-next-line import/no-unresolved
+import 'uno.css';
+
 const app = createApp(App);
 
 app.use(ArcoVue, {});

@@ -139,148 +139,150 @@
 <template>
   <div class="container">
     <Breadcrumb :items="['menu.list', 'menu.list.searchTable']" />
-    <el-form ref="queryForm" :inline="true">
-      <el-form-item>
-        <el-button type="success" :icon="Position" @click="handleAdd"
-          >发布商品</el-button
-        >
-        <el-button
-          type="danger"
-          :icon="Delete"
-          :disabled="multiple"
-          @click="handleDelete"
-          >删除</el-button
-        >
-      </el-form-item>
-      <el-form-item>
-        <el-input
-          v-model="queryParams.name"
-          placeholder="商品名称"
-          clearable
-        ></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-cascader
-          v-model="queryParams.categoryId"
-          placeholder="商品分类"
-          :props="{ emitPath: false }"
-          :options="categoryOptions"
-          clearable
-          style="width: 300px"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" :icon="Search" @click="handleQuery"
-          >查询</el-button
-        >
-        <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-
-    <el-table
-      ref="dataTableRef"
-      v-loading="loading"
-      :data="goodsList"
-      border
-      @selection-change="handleSelectionChange"
-      @row-click="handleRowClick"
-    >
-      <el-table-column type="selection" min-width="5%" center />
-      <el-table-column type="expand" width="120" label="库存信息">
-        <template #default="props">
-          <el-table :data="props.row.skuList" border>
-            <el-table-column align="center" label="商品编码" prop="skuSn" />
-            <el-table-column align="center" label="商品规格" prop="name" />
-            <el-table-column label="图片" prop="picUrl">
-              <template #default="scope">
-                <img :src="scope.row.picUrl" width="40" />
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="现价" prop="price">
-              <template #default="scope">{{
-                moneyFormatter(scope.row.price)
-              }}</template>
-            </el-table-column>
-            <el-table-column align="center" label="库存" prop="stockNum" />
-          </el-table>
-        </template>
-      </el-table-column>
-      <el-table-column label="商品名称" prop="name" min-width="140" />
-      <el-table-column label="商品图片">
-        <template #default="scope">
-          <el-popover placement="right" :width="400" trigger="hover">
-            <img :src="scope.row.picUrl" width="400" height="400" />
-            <template #reference>
-              <img
-                :src="scope.row.picUrl"
-                style="max-height: 60px; max-width: 60px"
-              />
-            </template>
-          </el-popover>
-        </template>
-      </el-table-column>
-      <el-table-column label="商品类目" prop="categoryName" min-width="100" />
-      <el-table-column label="商品品牌" prop="brandName" min-width="100" />
-      <el-table-column align="center" label="零售价" prop="originalPrice">
-        <template #default="scope">{{
-          moneyFormatter(scope.row.originPrice)
-        }}</template>
-      </el-table-column>
-      <el-table-column align="center" label="促销价" prop="price">
-        <template #default="scope">{{
-          moneyFormatter(scope.row.price)
-        }}</template>
-      </el-table-column>
-      <el-table-column label="销量" prop="sales" min-width="100" />
-      <el-table-column label="单位" prop="unit" min-width="100" />
-      <el-table-column
-        label="描述"
-        prop="description"
-        width="300"
-        :show-overflow-tooltip="true"
-      />
-      <el-table-column label="详情" prop="detail">
-        <template #default="scope">
-          <el-button
-            type="primary"
-            :icon="View"
-            circle
-            plain
-            @click.stop="handleGoodsView(scope.row.detail)"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="120">
-        <template #default="scope">
-          <el-button
-            type="primary"
-            :icon="Edit"
-            circle
-            plain
-            @click.stop="handleUpdate(scope.row)"
-          />
+    <div class="bg-white rounded-2xl p4">
+      <el-form ref="queryForm" class="mt-4" :inline="true">
+        <el-form-item>
+          <el-button type="success" :icon="Position" @click="handleAdd"
+            >发布商品</el-button
+          >
           <el-button
             type="danger"
             :icon="Delete"
-            circle
-            plain
-            @click.stop="handleDelete(scope.row)"
+            :disabled="multiple"
+            @click="handleDelete"
+            >删除</el-button
+          >
+        </el-form-item>
+        <el-form-item>
+          <el-input
+            v-model="queryParams.name"
+            placeholder="商品名称"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-cascader
+            v-model="queryParams.categoryId"
+            placeholder="商品分类"
+            :props="{ emitPath: false }"
+            :options="categoryOptions"
+            clearable
+            style="width: 300px"
           />
-        </template>
-      </el-table-column>
-    </el-table>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" :icon="Search" @click="handleQuery"
+            >查询</el-button
+          >
+          <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
+        </el-form-item>
+      </el-form>
 
-    <!-- 分页工具条 -->
-    <pagination
-      v-if="total > 0"
-      v-model:page="queryParams.page"
-      v-model:limit="queryParams.pageSize"
-      :total="total"
-      @pagination="handleQuery"
-    />
-    <el-dialog v-model="dialogVisible" title="商品详情">
-      <div class="goods-detail-box" v-html="goodDetail" />
-    </el-dialog>
+      <el-table
+        ref="dataTableRef"
+        v-loading="loading"
+        :data="goodsList"
+        border
+        @selection-change="handleSelectionChange"
+        @row-click="handleRowClick"
+      >
+        <el-table-column type="selection" min-width="5%" center />
+        <el-table-column type="expand" width="120" label="库存信息">
+          <template #default="props">
+            <el-table :data="props.row.skuList" border>
+              <el-table-column align="center" label="商品编码" prop="skuSn" />
+              <el-table-column align="center" label="商品规格" prop="name" />
+              <el-table-column label="图片" prop="coverImgUrl">
+                <template #default="scope">
+                  <img :src="scope.row.coverImgUrl" width="40" />
+                </template>
+              </el-table-column>
+              <el-table-column align="center" label="现价" prop="price">
+                <template #default="scope">{{
+                  moneyFormatter(scope.row.price)
+                }}</template>
+              </el-table-column>
+              <el-table-column align="center" label="库存" prop="stockNum" />
+            </el-table>
+          </template>
+        </el-table-column>
+        <el-table-column label="商品名称" prop="name" min-width="140" />
+        <el-table-column label="商品图片">
+          <template #default="scope">
+            <el-popover placement="right" :width="400" trigger="hover">
+              <img :src="scope.row.coverImgUrl" width="400" height="400" />
+              <template #reference>
+                <img
+                  :src="scope.row.coverImgUrl"
+                  style="max-height: 60px; max-width: 60px"
+                />
+              </template>
+            </el-popover>
+          </template>
+        </el-table-column>
+        <el-table-column label="商品类目" prop="categoryName" min-width="100" />
+        <el-table-column label="商品品牌" prop="brandName" min-width="100" />
+        <el-table-column align="center" label="零售价" prop="originalPrice">
+          <template #default="scope">{{
+            moneyFormatter(scope.row.originPrice)
+          }}</template>
+        </el-table-column>
+        <el-table-column align="center" label="促销价" prop="price">
+          <template #default="scope">{{
+            moneyFormatter(scope.row.price)
+          }}</template>
+        </el-table-column>
+        <el-table-column label="销量" prop="sales" min-width="100" />
+        <el-table-column label="单位" prop="unit" min-width="100" />
+        <el-table-column
+          label="描述"
+          prop="description"
+          width="300"
+          :show-overflow-tooltip="true"
+        />
+        <el-table-column label="详情" prop="detail">
+          <template #default="scope">
+            <el-button
+              type="primary"
+              :icon="View"
+              circle
+              plain
+              @click.stop="handleGoodsView(scope.row.detail)"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="120">
+          <template #default="scope">
+            <el-button
+              type="primary"
+              :icon="Edit"
+              circle
+              plain
+              @click.stop="handleUpdate(scope.row)"
+            />
+            <el-button
+              type="danger"
+              :icon="Delete"
+              circle
+              plain
+              @click.stop="handleDelete(scope.row)"
+            />
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <!-- 分页工具条 -->
+      <pagination
+        v-if="total > 0"
+        v-model:page="queryParams.page"
+        v-model:limit="queryParams.pageSize"
+        :total="total"
+        @pagination="handleQuery"
+      />
+      <el-dialog v-model="dialogVisible" title="商品详情">
+        <div class="goods-detail-box" v-html="goodDetail" />
+      </el-dialog>
+    </div>
   </div>
 </template>
 
