@@ -107,14 +107,15 @@
 
   // API 依赖
   import { listCategory } from '@/api/category';
-  import { type GoodsRecord, onshelfGoods } from '@/api/goods';
+  import { type GoodsRecord, onshelfGoods, getGoodsById } from '@/api/goods';
 
   // 自定义组件依赖
   import SingleUpload from '@/components/single-upload/index.vue';
+  import { useRouter } from 'vue-router';
 
   //   const emit = defineEmits(['prev', 'next', 'update:modelValue']);
   const dataFormRef = ref(ElForm);
-
+  type PartialGoods = Partial<GoodsRecord>;
   //   const props = defineProps({
   //     modelValue: {
   //       type: Object,
@@ -138,7 +139,7 @@
   //     },
   //   });
 
-  const goodsInfo = ref<Partial<GoodsRecord>>({
+  const goodsInfo = ref<PartialGoods>({
     id: undefined,
     name: '',
     categoryId: '',
@@ -201,22 +202,29 @@
       }
     });
   }
+
+  const router = useRouter();
   function loadData() {
     listCategory().then(({ data }) => {
       state.categoryOptions = data;
     });
-    const goodsId = goodsInfo.value.id;
+    const { ...othersQuery } = router.currentRoute.value.query;
+    console.log(othersQuery);
+    const goodsId = othersQuery?.goodsId as string;
     if (goodsId) {
-      const mainPicUrl = goodsInfo.value.coverImgUrl;
-      if (mainPicUrl) {
-        state.pictures.filter((item) => item.main)[0].url = mainPicUrl;
-      }
-      const { scollImages } = goodsInfo.value;
-      if (scollImages && scollImages.length > 0) {
-        for (let i = 1; i <= scollImages.length; i += 1) {
-          state.pictures[i].url = scollImages[i - 1];
+      getGoodsById(goodsId).then((resp) => {
+        goodsInfo.value = resp.data as PartialGoods;
+        const mainPicUrl = goodsInfo.value.coverImgUrl;
+        if (mainPicUrl) {
+          state.pictures.filter((item) => item.main)[0].url = mainPicUrl;
         }
-      }
+        const { scollImages } = goodsInfo.value;
+        if (scollImages && scollImages.length > 0) {
+          for (let i = 1; i <= scollImages.length; i += 1) {
+            state.pictures[i].url = scollImages[i - 1];
+          }
+        }
+      });
     }
   }
 

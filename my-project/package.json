@@ -44,6 +44,7 @@
     "nprogress": "^0.2.0",
     "pinia": "^2.0.9",
     "query-string": "^7.0.1",
+    "ts-md5": "^1.2.11",
     "unocss": "^0.31.0",
     "vue": "^3.2.31",
     "vue-echarts": "^6.0.0",

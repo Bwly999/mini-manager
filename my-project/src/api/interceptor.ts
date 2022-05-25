@@ -4,9 +4,8 @@ import { useUserStore } from '@/store';
 import { getToken } from '@/utils/auth';
 
 export interface HttpResponse<T = unknown> {
-  status: number;
-  msg: string;
-  code: number;
+  errno: number;
+  errmsg: string;
   data: T;
 }
 
@@ -39,14 +38,14 @@ axios.interceptors.response.use(
   (response: AxiosResponse<HttpResponse>) => {
     const res = response.data;
     // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
+    if (res.errno !== 0) {
       Message.error({
-        content: res.msg || 'Error',
+        content: res.errmsg || 'Error',
         duration: 5 * 1000,
       });
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
       if (
-        [50008, 50012, 50014].includes(res.code) &&
+        [50008, 50012, 50014].includes(res.errno) &&
         response.config.url !== '/api/user/info'
       ) {
         Modal.error({
@@ -62,13 +61,14 @@ axios.interceptors.response.use(
           },
         });
       }
-      return Promise.reject(new Error(res.msg || 'Error'));
+      return Promise.reject(new Error(res.errmsg || 'Error'));
     }
-    return res;
+    return res.data;
   },
   (error) => {
+    const res = error.response.data;
     Message.error({
-      content: error.msg || 'Request Error',
+      content: res.errmsg || 'Request Error',
       duration: 5 * 1000,
     });
     return Promise.reject(error);

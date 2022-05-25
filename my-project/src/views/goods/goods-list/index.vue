@@ -86,7 +86,7 @@
   function handleUpdate(row: any) {
     router.push({
       path: 'goods-detail',
-      query: { goodsId: row.id, categoryId: row.categoryId },
+      query: { goodsId: row.id },
     });
   }
 

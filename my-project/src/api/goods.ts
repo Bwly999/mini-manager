@@ -38,6 +38,10 @@ export function listGoodsPages(shopId: string, params: GoodsParams) {
   });
 }
 
+export function getGoodsById(goodsId: string) {
+  return axios.get<GoodsListRes>(`/goods/${goodsId}`);
+}
+
 export function deleteGoods(id: string) {
   return axios.delete(`/goods/${id}`);
 }

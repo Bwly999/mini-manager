@@ -31,5 +31,15 @@ export default {
         roles: ['*'],
       },
     },
+    {
+      path: 'goods-detail',
+      name: 'GoodsOnshelf',
+      component: () => import('@/views/goods/onshelf/index.vue'),
+      meta: {
+        requiresAuth: true,
+        roles: ['*'],
+        hideInMenu: true,
+      },
+    },
   ],
 };
