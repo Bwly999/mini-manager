@@ -24,7 +24,7 @@ axios.interceptors.request.use(
       if (!config.headers) {
         config.headers = {};
       }
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `${token}`;
     }
     return config;
   },
@@ -35,7 +35,7 @@ axios.interceptors.request.use(
 );
 // add response interceptors
 axios.interceptors.response.use(
-  (response: AxiosResponse<HttpResponse>) => {
+  (response: AxiosResponse<HttpResponse>): any => {
     const res = response.data;
     // if the custom code is not 20000, it is judged as an error.
     if (res.errno !== 0) {
@@ -63,7 +63,7 @@ axios.interceptors.response.use(
       }
       return Promise.reject(new Error(res.errmsg || 'Error'));
     }
-    return res.data;
+    return res;
   },
   (error) => {
     const res = error.response.data;

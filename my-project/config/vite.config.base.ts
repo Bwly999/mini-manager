@@ -30,19 +30,19 @@ export default defineConfig({
     extensions: ['.ts', '.js'],
   },
   // 本地反向代理解决浏览器跨域限制
-  server: {
-    host: '0.0.0.0',
-    port: Number(env.VITE_APP_PORT),
-    open: true, // 运行自动打开浏览器
-    proxy: {
-      [env.VITE_APP_BASE_API]: {
-        target: 'http://127.0.0.1:8080',
-        changeOrigin: true,
-        rewrite: (path) =>
-          path.replace(new RegExp(`^${env.VITE_API_BASE_URL}`), ''),
-      },
-    },
-  },
+  // server: {
+  //   host: '0.0.0.0',
+  //   port: Number(env.VITE_APP_PORT),
+  //   open: true, // 运行自动打开浏览器
+  //   proxy: {
+  //     [env.VITE_APP_BASE_API]: {
+  //       target: 'http://127.0.0.1:8080',
+  //       changeOrigin: true,
+  //       rewrite: (path) =>
+  //         path.replace(new RegExp(`^${env.VITE_API_BASE_URL}`), ''),
+  //     },
+  //   },
+  // },
   define: {
     'process.env': {},
   },

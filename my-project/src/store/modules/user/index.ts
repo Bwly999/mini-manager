@@ -9,25 +9,18 @@ import { setToken, clearToken } from '@/utils/auth';
 import { removeRouteListener } from '@/utils/route-listener';
 import { UserState } from './types';
 
+const defalutValues: UserState = {
+  role: 'admin',
+  avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+};
 const useUserStore = defineStore('user', {
   state: (): UserState => ({
-    name: undefined,
+    username: undefined,
     avatar: undefined,
-    job: undefined,
-    organization: undefined,
-    location: undefined,
     email: undefined,
-    introduction: undefined,
-    personalWebsite: undefined,
-    jobName: undefined,
-    organizationName: undefined,
-    locationName: undefined,
     phone: undefined,
-    registrationDate: undefined,
-    accountId: undefined,
-    certification: undefined,
     role: '',
-    shopId: '',
+    shop: undefined,
   }),
 
   getters: {
@@ -56,15 +49,17 @@ const useUserStore = defineStore('user', {
     // Get user's information
     async info() {
       const res = await getUserInfo();
-
-      this.setInfo(res.data);
+      const userInfo = {
+        ...res.data,
+        ...defalutValues,
+      };
+      this.setInfo(userInfo);
     },
 
     // Login
     async login(loginForm: LoginData) {
       try {
         const res = await userLogin(loginForm);
-        console.log(res);
         setToken(res.data);
       } catch (err) {
         clearToken();

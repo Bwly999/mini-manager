@@ -16,7 +16,7 @@ export interface GoodsRecord {
   level: string;
   weight: number;
   desc: string;
-  categoryId: string;
+  category: string;
 }
 
 export interface GoodsParams extends Partial<GoodsRecord> {
@@ -39,7 +39,7 @@ export function listGoodsPages(shopId: string, params: GoodsParams) {
 }
 
 export function getGoodsById(goodsId: string) {
-  return axios.get<GoodsListRes>(`/goods/${goodsId}`);
+  return axios.get<GoodsListRes>(`/goods/goods/${goodsId}`);
 }
 
 export function deleteGoods(id: string) {
@@ -49,12 +49,12 @@ export function deleteGoods(id: string) {
 export function uploadFile(file: File) {
   const formData = new FormData();
   formData.append('file', file);
-  return axios.post('/goods/file', {
-    data: formData,
+  return axios.post('/goods/goods/file', 
+    formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
-    }
-  });
+    }}
+  );
 }
 
 export function deleteFile(url: string) {
@@ -64,7 +64,5 @@ export function deleteFile(url: string) {
 }
 
 export function onshelfGoods(goods: Partial<GoodsRecord> ) {
-  return axios.post('/goods', {
-    data: goods
-  });
+  return axios.post('/goods/goods', goods);
 }

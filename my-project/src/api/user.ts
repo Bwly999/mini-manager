@@ -30,7 +30,8 @@ export function logout() {
 }
 
 export function getUserInfo() {
-  return axios.post<UserState>('/api/user/info');
+  // return axios.post<UserState>('/api/user/info');
+  return axios.get<UserState>('/user/admin/info');
 }
 
 export function getMenuList() {

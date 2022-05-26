@@ -8,6 +8,7 @@
       :show-file-list="false"
       :before-upload="handleBeforeUpload"
       :http-request="uploadImage"
+      :accept="props.accept"
     >
       <img v-if="imgUrl" :src="imgUrl" class="single-uploader__image" />
 
@@ -52,6 +53,10 @@
       type: Boolean,
       default: false,
     },
+    accept: {
+      type: String,
+      default: 'image/*',
+    },
   });
 
   const imgUrl = computed<string | undefined>({
@@ -80,20 +85,20 @@
    * @param fileUrl
    */
   function handleRemove(fileUrl?: string) {
-    if (fileUrl) {
-      deleteFile(fileUrl);
-      imgUrl.value = undefined; // 这里会触发imgUrl的computed的set方法
-    }
+    // if (fileUrl) {
+    //   deleteFile(fileUrl);
+    //   imgUrl.value = undefined; // 这里会触发imgUrl的computed的set方法
+    // }
   }
   /**
    * 在 before-upload 钩子中限制用户上传文件的格式和大小
    */
   function handleBeforeUpload(file: UploadRawFile) {
     // const isJPG = file.type === "image/jpeg";
-    const isLt2M = file.size / 1024 / 1024 < 2;
+    const isLt8M = file.size / 1024 / 1024 < 8;
 
-    if (!isLt2M) {
-      ElMessage.warning('上传图片不能大于2M');
+    if (!isLt8M) {
+      ElMessage.warning('上传图片不能大于8M');
     }
     return true;
   }

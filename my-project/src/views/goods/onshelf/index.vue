@@ -12,17 +12,17 @@
           <el-form-item label="商品名称" prop="name">
             <el-input v-model="goodsInfo.name" style="width: 400px" />
           </el-form-item>
-          <el-form-item label="商品分类" prop="categoryId">
+          <el-form-item label="商品分类" prop="category">
             <el-select
-              v-model="goodsInfo.categoryId"
+              v-model="goodsInfo.category"
               style="width: 400px"
               clearable
             >
               <el-option
-                v-for="item in categoryOptions"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
+                v-for="(item, i) in categoryOptions"
+                :key="i"
+                :label="item"
+                :value="item"
               />
             </el-select>
           </el-form-item>
@@ -47,6 +47,10 @@
 
           <el-form-item label="优惠价" prop="discountPrice">
             <el-input v-model="goodsInfo.discountPrice" style="width: 400px" />
+          </el-form-item>
+
+          <el-form-item label="库存" prop="stock">
+            <el-input v-model="goodsInfo.stock" style="width: 400px" />
           </el-form-item>
 
           <el-form-item label="商品相册">
@@ -142,7 +146,7 @@
   const goodsInfo = ref<PartialGoods>({
     id: undefined,
     name: '',
-    categoryId: '',
+    category: '',
     price: undefined,
     discountPrice: undefined,
     desc: '',
@@ -167,7 +171,7 @@
       //   discountPrice: [
       //     { required: true, message: '请填写优惠价', trigger: 'blur' },
       //   ],
-      categoryId: [
+      category: [
         { required: true, message: '请选择商品分类', trigger: 'blur' },
       ],
     },

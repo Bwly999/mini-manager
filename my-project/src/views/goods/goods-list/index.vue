@@ -117,8 +117,8 @@
   }
 
   onMounted(() => {
-    listCategory().then((response) => {
-      categoryOptions.value = response.data.map((item: any) => {
+    listCategory().then((response: any) => {
+      categoryOptions.value = response.map((item: any) => {
         return {
           label: item.name,
           value: item.id,
