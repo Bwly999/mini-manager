@@ -166,7 +166,7 @@
           >
           <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
         </el-form-item>
-        <el-form-item class="ml-30">
+        <el-form-item class="">
           <el-button type="success" :icon="Position" @click="handleAdd"
             >发布商品</el-button
           >
@@ -189,7 +189,7 @@
         @row-click="handleRowClick"
       >
         <el-table-column type="selection" min-width="5%" center />
-        <el-table-column type="expand" width="120" label="库存信息">
+        <el-table-column type="expand" width="40" label="">
           <template #default="props">
             <!-- <el-table :data="props.row.skuList" border>
               <el-table-column align="center" label="商品编码" prop="skuSn" />
@@ -245,26 +245,21 @@
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column label="商品类目" prop="categoryName" min-width="100" />
-        <el-table-column label="商品品牌" prop="brandName" min-width="100" />
-        <el-table-column align="center" label="零售价" prop="originalPrice">
-          <template #default="scope">{{
-            moneyFormatter(scope.row.originPrice)
-          }}</template>
-        </el-table-column>
-        <el-table-column align="center" label="促销价" prop="price">
+        <el-table-column label="商品类目" prop="category" min-width="100" />
+        <el-table-column align="center" label="价格" prop="price">
           <template #default="scope">{{
             moneyFormatter(scope.row.price)
           }}</template>
         </el-table-column>
-        <el-table-column label="销量" prop="sales" min-width="100" />
-        <el-table-column label="单位" prop="unit" min-width="100" />
-        <el-table-column
-          label="描述"
-          prop="description"
-          width="300"
-          :show-overflow-tooltip="true"
-        />
+        <el-table-column align="center" label="折扣价" prop="discountPrice">
+          <template #default="scope">{{
+            moneyFormatter(scope.row.discountPrice)
+          }}</template>
+        </el-table-column>
+
+        <el-table-column label="销量" prop="monthSale" min-width="100" />
+        <el-table-column label="重量" prop="weight" min-width="100" />
+        <el-table-column label="库存" prop="stock" min-width="100" />
         <el-table-column label="详情" prop="detail">
           <template #default="scope">
             <el-button
@@ -304,11 +299,16 @@
         :total="total"
         @pagination="handleQuery"
       />
-      <el-dialog v-model="dialogVisible" title="商品详情">
-        <!-- <div class="goods-detail-box" v-html="goodDetail" /> -->
-        <div class="goods-detail-box">
+      <el-dialog
+        v-model="dialogVisible"
+        width="70%"
+        height="70%"
+        title="商品详情"
+      >
+        <div class="goods-detail-box" v-html="goodDetail" />
+        <!-- <div class="goods-detail-box">
           {{ goodDetail }}
-        </div>
+        </div> -->
       </el-dialog>
     </div>
   </div>

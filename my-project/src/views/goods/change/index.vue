@@ -12,11 +12,13 @@
     const { id } = goodsInfo.value;
     console.log(goodsInfo.value);
     if (!id) {
-      ElMessageBox.alert('请先保存商品信息');
+      ElMessageBox.alert('该商品信息不存在');
       return;
     }
     ElMessageBox.confirm('确认要修改商品信息吗？', {
       type: 'warning',
+      cancelButtonText: '取消',
+      confirmButtonText: '确认',
     }).then(() => {
       updateGoods(id, goodsInfo.value).then(() => {
         ElMessage.success('修改成功');

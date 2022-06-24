@@ -44,6 +44,8 @@ export default {
   'menu.goods.list': '商品列表',
   'menu.goods.onshelf': '商品上架',
   'menu.goods.change': '商品修改',
+  'menu.order': '订单管理',
+  'menu.order.list': '订单列表',
   'navbar.docs': '文档中心',
   'navbar.action.locale': '切换为中文',
   ...localeSettings,

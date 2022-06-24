@@ -2,6 +2,7 @@
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true,
     },
+    "files.eol": "\n",
     "i18n-ally.localesPaths": [
         "src/locale",
         "src/components/message-box/locale",

@@ -6,26 +6,30 @@
   import { useRouter } from 'vue-router';
 
   import SingleUpload from '@/components/single-upload/index.vue';
+  import Editor from '@/components/editor/index.vue';
 
   type PartialGoods = Partial<GoodsRecord>;
   const emit = defineEmits(['update:modelValue']);
-  const props = defineProps({
-    modelValue: {
-      type: Object,
-      default: () => ({
-        name: '',
-        categoryId: '',
+  const props = defineProps<{
+    modelValue: PartialGoods;
+  }>();
+  // const props = defineProps({
+  //   modelValue: {
+  //     type: Object,
+  //     default: () => ({
+  //       name: '',
+  //       categoryId: '',
 
-        price: '',
-        dsicountPrice: '',
-        desc: '',
-        detail: '',
-        pictures: [],
-      }),
-    },
-  });
+  //       price: '',
+  //       dsicountPrice: '',
+  //       desc: '',
+  //       detail: '',
+  //       pictures: [],
+  //     }),
+  //   },
+  // });
 
-  const goodsInfo: any = computed({
+  const goodsInfo = computed({
     get: () => props.modelValue,
     set: (value) => {
       emit('update:modelValue', value);
@@ -209,14 +213,8 @@
         </el-card>
       </el-form-item>
 
-      <el-form-item label="商品介绍">
-        <el-input
-          v-model="goodsInfo.desc"
-          class=""
-          type="textarea"
-          :rows="25"
-          :autosize="{ minRows: 10, maxRows: 90 }"
-        />
+      <el-form-item label="商品详情">
+        <editor v-model="goodsInfo.desc" style="height: 600px" />
       </el-form-item>
     </el-form>
   </div>

@@ -12,6 +12,7 @@ export interface HttpResponse<T = unknown> {
 if (import.meta.env.VITE_API_BASE_URL) {
   axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 }
+// axios.defaults.baseURL = 'http://139.196.12.152:8080';
 
 axios.interceptors.request.use(
   (config: AxiosRequestConfig) => {

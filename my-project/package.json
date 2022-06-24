@@ -1,9 +1,9 @@
 {
-  "name": "arco-design-pro-vue",
-  "description": "Arco Design Pro for Vue",
+  "name": "mannger",
+  "description": "mannger for mini",
   "version": "1.0.0",
   "private": true,
-  "author": "ArcoDesign Team",
+  "author": "bwly",
   "license": "MIT",
   "scripts": {
     "dev": "vite --config ./config/vite.config.dev.ts",
@@ -34,6 +34,8 @@
     "@types/mockjs": "^1.0.4",
     "@unocss/reset": "^0.31.0",
     "@vueuse/core": "^7.3.0",
+    "@wangeditor/editor": "^5.0.0",
+    "@wangeditor/editor-for-vue": "^5.1.10",
     "arco-design-pro-vue": "^2.4.1",
     "axios": "^0.24.0",
     "dayjs": "^1.10.7",
