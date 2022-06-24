@@ -85,6 +85,7 @@
    * @param fileUrl
    */
   function handleRemove(fileUrl?: string) {
+    imgUrl.value = '';
     // if (fileUrl) {
     //   deleteFile(fileUrl);
     //   imgUrl.value = undefined; // 这里会触发imgUrl的computed的set方法

@@ -43,6 +43,7 @@ export default {
   'menu.goods': '商品管理',
   'menu.goods.list': '商品列表',
   'menu.goods.onshelf': '商品上架',
+  'menu.goods.change': '商品修改',
   'navbar.docs': '文档中心',
   'navbar.action.locale': '切换为中文',
   ...localeSettings,

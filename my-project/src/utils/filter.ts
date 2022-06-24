@@ -76,5 +76,6 @@ export function uppercaseFirst(string: string) {
  * @param {number} num
  */
 export function moneyFormatter(num: number) {
+  if (num === undefined || num === null) return '';
   return `¥${Number.isNaN(num) ? 0.0 : parseFloat((num / 100).toFixed(2))}`;
 }

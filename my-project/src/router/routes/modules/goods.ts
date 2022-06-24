@@ -32,10 +32,11 @@ export default {
       },
     },
     {
-      path: 'goods-detail',
-      name: 'GoodsOnshelf',
-      component: () => import('@/views/goods/onshelf/index.vue'),
+      path: 'change',
+      name: 'GoodsChange',
+      component: () => import('@/views/goods/change/index.vue'),
       meta: {
+        locale: 'menu.goods.change',
         requiresAuth: true,
         roles: ['*'],
         hideInMenu: true,

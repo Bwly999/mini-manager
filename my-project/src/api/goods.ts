@@ -17,6 +17,7 @@ export interface GoodsRecord {
   weight: number;
   desc: string;
   category: string;
+  shopId: string;
 }
 
 export interface GoodsParams extends Partial<GoodsRecord> {
@@ -26,11 +27,13 @@ export interface GoodsParams extends Partial<GoodsRecord> {
 
 export interface GoodsListRes {
   content: GoodsRecord[];
-  total: number;
+  totalElements: number;
 }
 
+export type PartialGoods = Partial<GoodsRecord>
+
 export function listGoodsPages(shopId: string, params: GoodsParams) {
-  return axios.get<GoodsListRes>(`/goods/shopId/${shopId}`, {
+  return axios.get<GoodsListRes>(`/goods/goods/shopId/${shopId}`, {
     params,
     paramsSerializer: (obj) => {
       return qs.stringify(obj);
@@ -65,4 +68,8 @@ export function deleteFile(url: string) {
 
 export function onshelfGoods(goods: Partial<GoodsRecord> ) {
   return axios.post('/goods/goods', goods);
+}
+
+export function updateGoods(goodsId: string, goods: Partial<GoodsRecord> ) {
+  return axios.put(`/goods/goods/${goodsId}`, goods);
 }

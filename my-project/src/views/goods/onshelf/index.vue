@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <Breadcrumb :items="['menu.list', 'menu.list.searchTable']" />
+  <div class="container1">
+    <Breadcrumb :items="['menu.goods', 'menu.goods.onshelf']" />
     <div class="component-container bg-white rounded-2xl p4">
       <div class="component-container__main">
         <el-form
@@ -116,6 +116,7 @@
   // 自定义组件依赖
   import SingleUpload from '@/components/single-upload/index.vue';
   import { useRouter } from 'vue-router';
+  import { useUserStore } from '@/store';
 
   //   const emit = defineEmits(['prev', 'next', 'update:modelValue']);
   const dataFormRef = ref(ElForm);
@@ -153,6 +154,7 @@
     stock: undefined,
     coverImgUrl: undefined,
     scollImages: [],
+    shopId: '',
   });
 
   const state = reactive({
@@ -174,8 +176,11 @@
       category: [
         { required: true, message: '请选择商品分类', trigger: 'blur' },
       ],
+      stock: [{ required: true, message: '请填写库存', trigger: 'blur' }],
     },
   });
+
+  const userStore = useUserStore();
 
   const { categoryOptions, pictures, rules } = toRefs(state);
   function onshelf() {
@@ -192,13 +197,13 @@
           if (coverImgUrl) {
             goodsInfo.value.coverImgUrl = coverImgUrl;
           }
-          const scollImages = state.pictures
-            .filter((item) => item.main === false && item.url)
-            .map((item) => item.url);
+
+          const scollImages = state.pictures.slice(1).map((item) => item.url);
           if (scollImages && scollImages.length > 0) {
             goodsInfo.value.scollImages = scollImages;
           }
 
+          goodsInfo.value.shopId = userStore.id;
           onshelfGoods(goodsInfo.value).then(() => {
             ElMessage.success('上架成功');
           });
@@ -251,7 +256,7 @@
 </script>
 
 <style lang="scss" scoped>
-  .container {
+  .container1 {
     padding: 0 20px 20px 20px;
   }
   .component-container {

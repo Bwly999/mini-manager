@@ -7,7 +7,7 @@ import {
 } from '@/api/user';
 import { setToken, clearToken } from '@/utils/auth';
 import { removeRouteListener } from '@/utils/route-listener';
-import { UserState } from './types';
+import { Shop, UserState } from './types';
 
 const defalutValues: UserState = {
   role: 'admin',
@@ -15,6 +15,7 @@ const defalutValues: UserState = {
 };
 const useUserStore = defineStore('user', {
   state: (): UserState => ({
+    id: undefined,
     username: undefined,
     avatar: undefined,
     email: undefined,
@@ -53,6 +54,8 @@ const useUserStore = defineStore('user', {
         ...res.data,
         ...defalutValues,
       };
+      userInfo.shop = userInfo.shop || ({} as Shop);
+      userInfo.shop.id = userInfo.id ?? '';
       this.setInfo(userInfo);
     },
 

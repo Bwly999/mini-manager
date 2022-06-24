@@ -55,13 +55,15 @@
 
   function handleQuery() {
     state.loading = true;
-    listGoodsPages(userStore.shopId || '', state.queryParams).then(
-      ({ data }) => {
+    listGoodsPages(userStore.shop?.id || '', state.queryParams)
+      .then(({ data }) => {
         state.goodsList = data.content;
-        state.total = data.total;
+        state.total = data.totalElements;
         state.loading = false;
-      }
-    );
+      })
+      .finally(() => {
+        state.loading = false;
+      });
   }
 
   function resetQuery() {
@@ -69,7 +71,7 @@
       page: 1,
       pageSize: 10,
       name: undefined,
-      categoryId: undefined,
+      category: undefined,
     };
     handleQuery();
   }
@@ -85,7 +87,7 @@
 
   function handleUpdate(row: any) {
     router.push({
-      path: 'goods-detail',
+      path: 'change',
       query: { goodsId: row.id },
     });
   }
@@ -118,10 +120,10 @@
 
   onMounted(() => {
     listCategory().then((response: any) => {
-      categoryOptions.value = response.map((item: any) => {
+      categoryOptions.value = response.data?.map((item: any) => {
         return {
-          label: item.name,
-          value: item.id,
+          label: item,
+          value: item,
         };
       });
     });
@@ -138,21 +140,9 @@
 
 <template>
   <div class="container">
-    <Breadcrumb :items="['menu.list', 'menu.list.searchTable']" />
+    <Breadcrumb :items="['menu.goods', 'menu.goods.list']" />
     <div class="bg-white rounded-2xl p4">
       <el-form ref="queryForm" class="mt-4" :inline="true">
-        <el-form-item>
-          <el-button type="success" :icon="Position" @click="handleAdd"
-            >发布商品</el-button
-          >
-          <el-button
-            type="danger"
-            :icon="Delete"
-            :disabled="multiple"
-            @click="handleDelete"
-            >删除</el-button
-          >
-        </el-form-item>
         <el-form-item>
           <el-input
             v-model="queryParams.name"
@@ -162,7 +152,7 @@
         </el-form-item>
         <el-form-item>
           <el-cascader
-            v-model="queryParams.categoryId"
+            v-model="queryParams.category"
             placeholder="商品分类"
             :props="{ emitPath: false }"
             :options="categoryOptions"
@@ -175,6 +165,18 @@
             >查询</el-button
           >
           <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
+        </el-form-item>
+        <el-form-item class="ml-30">
+          <el-button type="success" :icon="Position" @click="handleAdd"
+            >发布商品</el-button
+          >
+          <el-button
+            type="danger"
+            :icon="Delete"
+            :disabled="multiple"
+            @click="handleDelete"
+            >删除</el-button
+          >
         </el-form-item>
       </el-form>
 
@@ -189,7 +191,7 @@
         <el-table-column type="selection" min-width="5%" center />
         <el-table-column type="expand" width="120" label="库存信息">
           <template #default="props">
-            <el-table :data="props.row.skuList" border>
+            <!-- <el-table :data="props.row.skuList" border>
               <el-table-column align="center" label="商品编码" prop="skuSn" />
               <el-table-column align="center" label="商品规格" prop="name" />
               <el-table-column label="图片" prop="coverImgUrl">
@@ -203,7 +205,30 @@
                 }}</template>
               </el-table-column>
               <el-table-column align="center" label="库存" prop="stockNum" />
-            </el-table>
+            </el-table> -->
+
+            <!-- <el-card> -->
+            <div text-left font-bold>
+              <p align="center" inline="!"> 商品名: {{ props.row.name }} </p>
+              <div>
+                <p>封面</p>
+                <img :src="props.row.coverImgUrl" width="40" />
+              </div>
+              <div label="详情图片" prop="coverImgUrl">
+                <p>详情图片</p>
+                <div>
+                  <img
+                    v-for="(imgUrl, i) in props.row.scollImages"
+                    :key="i"
+                    :src="imgUrl"
+                    width="40"
+                  />
+                </div>
+              </div>
+              <p> 现价 {{ moneyFormatter(props.row.price) }} </p>
+              <p> 库存: {{ props.row.stock }} </p>
+            </div>
+            <!-- </el-card> -->
           </template>
         </el-table-column>
         <el-table-column label="商品名称" prop="name" min-width="140" />
@@ -247,7 +272,7 @@
               :icon="View"
               circle
               plain
-              @click.stop="handleGoodsView(scope.row.detail)"
+              @click.stop="handleGoodsView(scope.row.desc)"
             />
           </template>
         </el-table-column>
@@ -280,7 +305,10 @@
         @pagination="handleQuery"
       />
       <el-dialog v-model="dialogVisible" title="商品详情">
-        <div class="goods-detail-box" v-html="goodDetail" />
+        <!-- <div class="goods-detail-box" v-html="goodDetail" /> -->
+        <div class="goods-detail-box">
+          {{ goodDetail }}
+        </div>
       </el-dialog>
     </div>
   </div>

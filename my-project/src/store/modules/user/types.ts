@@ -20,10 +20,12 @@ export type RoleType = '' | '*' | 'admin' | 'user';
 // }
 
 export interface Shop {
+  id: string;
   name: string;
   orderIdList: string[];
 }
 export interface UserState {
+  id?: string;
   username?: string;
   phone?: string;
   email?: string;
