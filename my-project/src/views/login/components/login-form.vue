@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div p4 bg-gray="50" rounded>
     <div v-show="!isRegister" class="login-form-wrapper">
       <div class="login-form-title">{{ $t('login.form.title') }}</div>
       <div class="login-form-sub-title">{{ $t('login.form.title') }}</div>

@@ -10,7 +10,17 @@
       :http-request="uploadImage"
       :accept="props.accept"
     >
-      <img v-if="imgUrl" :src="imgUrl" class="single-uploader__image" />
+      <img
+        v-if="imgUrl && props.accept.startsWith('image')"
+        :src="imgUrl"
+        class="single-uploader__image"
+      />
+      <video
+        v-else-if="imgUrl && props.accept.startsWith('video')"
+        class="single-uploader__video"
+      >
+        <source :src="imgUrl" />
+      </video>
 
       <el-icon v-else class="single-uploader__plus">
         <Plus />
@@ -96,10 +106,10 @@
    */
   function handleBeforeUpload(file: UploadRawFile) {
     // const isJPG = file.type === "image/jpeg";
-    const isLt8M = file.size / 1024 / 1024 < 8;
+    const isLt8M = file.size / 1024 / 1024 < 100;
 
     if (!isLt8M) {
-      ElMessage.warning('上传图片不能大于8M');
+      ElMessage.warning('上传图片不能大于100M');
     }
     return true;
   }
@@ -119,6 +129,12 @@
     }
 
     &__image {
+      width: 146px;
+      height: 146px;
+      display: block;
+    }
+
+    &__video {
       width: 146px;
       height: 146px;
       display: block;

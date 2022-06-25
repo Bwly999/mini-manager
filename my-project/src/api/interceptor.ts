@@ -13,6 +13,7 @@ if (import.meta.env.VITE_API_BASE_URL) {
   axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 }
 // axios.defaults.baseURL = 'http://139.196.12.152:8080';
+axios.defaults.baseURL = 'http://47.99.200.3:8080';
 
 axios.interceptors.request.use(
   (config: AxiosRequestConfig) => {

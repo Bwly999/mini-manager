@@ -179,6 +179,29 @@
         <el-input v-model="goodsInfo.stock" style="width: 400px" />
       </el-form-item>
 
+      <el-form-item label="商品展示视频">
+        <el-card
+          style="
+            width: 170px;
+            display: inline-block;
+            margin-left: 10px;
+            text-align: center;
+          "
+          :body-style="{ padding: '10px' }"
+        >
+          <single-upload
+            v-model="goodsInfo.videoUrl"
+            :show-close="true"
+            accept="video/*"
+          />
+
+          <div>
+            <!-- 占位 -->
+            <el-link type="info" />
+          </div>
+        </el-card>
+      </el-form-item>
+
       <el-form-item label="商品相册">
         <el-card
           v-for="(item, index) in pictures"

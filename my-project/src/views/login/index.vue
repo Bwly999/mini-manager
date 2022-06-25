@@ -7,8 +7,8 @@
       />
       <div class="logo-text">Arco Design Pro</div>
     </div>
-    <LoginBanner />
-    <div class="content">
+    <!-- <LoginBanner /> -->
+    <div class="content" justify-center>
       <div class="content-inner">
         <LoginForm />
       </div>
@@ -29,9 +29,13 @@
   .container {
     display: flex;
     height: 100vh;
+    width: 1000vw;
+    max-width: 100vw;
+
+    background: linear-gradient(163.85deg, #1d2129 0%, #00308f 100%);
 
     .banner {
-      width: 550px;
+      // width: 550px;
       background: linear-gradient(163.85deg, #1d2129 0%, #00308f 100%);
     }
 
