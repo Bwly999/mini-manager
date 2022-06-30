@@ -21,15 +21,5 @@ export default {
         roles: ['*'],
       },
     },
-    {
-      path: 'onshelf',
-      name: 'GoodsOnshelf',
-      component: () => import('@/views/goods/onshelf/index.vue'),
-      meta: {
-        locale: 'menu.goods.onshelf',
-        requiresAuth: true,
-        roles: ['*'],
-      },
-    },
   ],
 };

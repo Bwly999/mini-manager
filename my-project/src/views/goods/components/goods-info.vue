@@ -13,21 +13,6 @@
   const props = defineProps<{
     modelValue: PartialGoods;
   }>();
-  // const props = defineProps({
-  //   modelValue: {
-  //     type: Object,
-  //     default: () => ({
-  //       name: '',
-  //       categoryId: '',
-
-  //       price: '',
-  //       dsicountPrice: '',
-  //       desc: '',
-  //       detail: '',
-  //       pictures: [],
-  //     }),
-  //   },
-  // });
 
   const goodsInfo = computed({
     get: () => props.modelValue,
@@ -112,6 +97,9 @@
     state.pictures[changeIndex].url = currMainPicture.url;
   }
 
+  const price = ref<number>();
+  const discountPrice = ref<number>();
+
   // 当图改变时 修改goodsInfo中的图片
   watch(
     pictures,
@@ -125,6 +113,16 @@
     },
     { deep: true, immediate: true }
   );
+
+  watch(price, (newValue: number | undefined) => {
+    if (newValue !== undefined)
+      goodsInfo.value.price = Math.floor(newValue * 100);
+  });
+
+  watch(discountPrice, (newValue: number | undefined) => {
+    if (newValue !== undefined)
+      goodsInfo.value.discountPrice = Math.floor(newValue * 100);
+  });
 
   onMounted(() => {
     loadData();
@@ -168,11 +166,15 @@
       </el-form-item>
 
       <el-form-item label="价格" prop="price">
-        <el-input v-model="goodsInfo.price" style="width: 400px" />
+        <el-input v-model="price" type="number" style="width: 400px">
+          <template #append>元</template>
+        </el-input>
       </el-form-item>
 
       <el-form-item label="优惠价" prop="discountPrice">
-        <el-input v-model="goodsInfo.discountPrice" style="width: 400px" />
+        <el-input v-model="discountPrice" type="number" style="width: 400px">
+          <template #append>元</template>
+        </el-input>
       </el-form-item>
 
       <el-form-item label="库存" prop="stock">

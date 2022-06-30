@@ -18,7 +18,7 @@ export interface LoginRes {
   token: string;
 }
 export function login(data: LoginData) {
-  return axios.post<string>('/user/admin/login', data);
+  return axios.post<string>('/user/admin/login/', data);
 }
 
 export function register(data: RegisterData) {

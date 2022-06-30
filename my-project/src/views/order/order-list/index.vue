@@ -1,77 +1,70 @@
 <script lang="ts" setup>
   import { computed, ref, reactive } from 'vue';
-  import { useI18n } from 'vue-i18n';
+  import { Message } from '@arco-design/web-vue';
   import useLoading from '@/hooks/loading';
-  import { queryPolicyList, PolicyRecord, PolicyParams } from '@/api/list';
-  import { Pagination } from '@/types/global';
+  import {
+    type OrderParams,
+    type OrderRecord,
+    listOrderPages,
+    Address,
+    addLogistic,
+  } from '@/api/order';
   import type { SelectOptionData } from '@arco-design/web-vue/es/select/interface';
-  import { useLocalStorage } from '@vueuse/core';
 
-  const generateFormModel = () => {
+  const generateFormModel = (): OrderParams => {
     return {
-      number: '',
-      name: '',
-      contentType: '',
-      filterType: '',
-      createdTime: [],
-      status: '',
+      state: undefined,
+      goodsId: undefined,
+      payWay: undefined,
     };
   };
-  useLocalStorage();
+
   const { loading, setLoading } = useLoading(true);
-  const { t } = useI18n();
-  const renderData = ref<PolicyRecord[]>([]);
+  const renderData = ref<OrderRecord[]>([]);
   const formModel = ref(generateFormModel());
-  const basePagination: Pagination = {
-    current: 1,
+  const basePagination = {
+    page: 1,
     pageSize: 20,
+    total: 0,
   };
   const pagination = reactive({
     ...basePagination,
   });
-  const contentTypeOptions = computed<SelectOptionData[]>(() => [
+  const payWayOptions = computed<SelectOptionData[]>(() => [
     {
-      label: t('searchTable.form.contentType.img'),
-      value: 'img',
+      label: '微信支付',
+      value: 0,
     },
     {
-      label: t('searchTable.form.contentType.horizontalVideo'),
-      value: 'horizontalVideo',
-    },
-    {
-      label: t('searchTable.form.contentType.verticalVideo'),
-      value: 'verticalVideo',
+      label: '线下到付',
+      value: 1,
     },
   ]);
-  const filterTypeOptions = computed<SelectOptionData[]>(() => [
+  const stateOptions = computed<SelectOptionData[]>(() => [
     {
-      label: t('searchTable.form.filterType.artificial'),
-      value: 'artificial',
+      label: '未支付',
+      value: 0,
     },
     {
-      label: t('searchTable.form.filterType.rules'),
-      value: 'rules',
+      label: '已支付',
+      value: 1,
     },
+    {
+      label: '待收货',
+      value: 2,
+    },
+    // {
+    //   label: '待退款',
+    //   value: 3,
+    // },
   ]);
-  const statusOptions = computed<SelectOptionData[]>(() => [
-    {
-      label: t('searchTable.form.status.online'),
-      value: 'online',
-    },
-    {
-      label: t('searchTable.form.status.offline'),
-      value: 'offline',
-    },
-  ]);
-  const fetchData = async (
-    params: PolicyParams = { current: 1, pageSize: 20 }
-  ) => {
+  const fetchData = async (params: OrderParams = { page: 1, pageSize: 20 }) => {
     setLoading(true);
     try {
-      const { data } = await queryPolicyList(params);
-      renderData.value = data.list;
-      pagination.current = params.current;
-      pagination.total = data.total;
+      const { data } = await listOrderPages(params);
+      renderData.value = data.content;
+      pagination.page = params.page || 1;
+      pagination.total = data.totalElements;
     } catch (err) {
       // you can report use errorHandler or other
     } finally {
@@ -83,10 +76,10 @@
     fetchData({
       ...basePagination,
       ...formModel.value,
-    } as unknown as PolicyParams);
+    } as unknown as OrderParams);
   };
-  const onPageChange = (current: number) => {
-    fetchData({ ...basePagination, current });
+  const onPageChange = (page: number) => {
+    fetchData({ ...basePagination, page });
   };
 
   fetchData();
@@ -94,14 +87,56 @@
     formModel.value = generateFormModel();
   };
 
+  function formatAddress(address: Address) {
+    return `${address.province}${address.city}${address.district}${address.detailAddress}`;
+  }
+
+  function formatPerson(address: Address) {
+    return `${address.consignee}\n${address.phone}`;
+  }
+
   const payWayMap = new Map();
   payWayMap.set(0, '微信支付');
   payWayMap.set(1, '线下到付');
+
+  const stateMap = new Map();
+  stateMap.set(0, { label: '未支付' });
+  stateMap.set(1, { label: '已支付' });
+  stateMap.set(2, { label: '待收货' });
+
+  const selectedOrder = ref<OrderRecord>();
+  const openModal = (order: OrderRecord) => {
+    console.log(order);
+    selectedOrder.value = order;
+    modalVisible.value = true;
+  };
+  const logisticNum = ref('');
+  const modalVisible = ref(false);
+  const handleBeforeOk = (done: (closed: boolean) => void) => {
+    if (!selectedOrder.value?.id) {
+      done(true);
+      return;
+    }
+    addLogistic(selectedOrder.value?.id, {
+      logisticsNumber: logisticNum.value,
+    })
+      .then(() => {
+        if (selectedOrder.value) selectedOrder.value.state = 2;
+        done(true);
+      })
+      .catch((err: any) => {
+        Message.error(err);
+        done(false);
+      });
+  };
+  const handleCancel = () => {
+    modalVisible.value = false;
+  };
 </script>
 
 <script lang="ts">
   export default {
-    name: 'SearchTable',
+    name: 'OrderList',
   };
 </script>
 
@@ -119,68 +154,36 @@
           >
             <a-row :gutter="16">
               <a-col :span="8">
-                <a-form-item
-                  field="number"
-                  :label="$t('searchTable.form.number')"
-                >
+                <a-form-item field="goodsId" label="商品编号">
                   <a-input
-                    v-model="formModel.number"
-                    :placeholder="$t('searchTable.form.number.placeholder')"
+                    v-model="formModel.goodsId"
+                    placeholder="请输入商品编号"
                   />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <a-form-item field="name" :label="$t('searchTable.form.name')">
+                <a-form-item field="goodsName" label="商品名">
                   <a-input
-                    v-model="formModel.name"
-                    :placeholder="$t('searchTable.form.name.placeholder')"
+                    v-model="formModel.goodsName"
+                    placeholder="请输入商品名"
                   />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <a-form-item
-                  field="contentType"
-                  :label="$t('searchTable.form.contentType')"
-                >
+                <a-form-item field="payWay" label="支付方式">
                   <a-select
-                    v-model="formModel.contentType"
-                    :options="contentTypeOptions"
-                    :placeholder="$t('searchTable.form.selectDefault')"
+                    v-model="formModel.payWay"
+                    :options="payWayOptions"
+                    placeholder="全部"
                   />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <a-form-item
-                  field="filterType"
-                  :label="$t('searchTable.form.filterType')"
-                >
+                <a-form-item field="state" label="订单状态">
                   <a-select
-                    v-model="formModel.filterType"
-                    :options="filterTypeOptions"
-                    :placeholder="$t('searchTable.form.selectDefault')"
-                  />
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item
-                  field="createdTime"
-                  :label="$t('searchTable.form.createdTime')"
-                >
-                  <a-range-picker
-                    v-model="formModel.createdTime"
-                    style="width: 100%"
-                  />
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item
-                  field="status"
-                  :label="$t('searchTable.form.status')"
-                >
-                  <a-select
-                    v-model="formModel.status"
-                    :options="statusOptions"
-                    :placeholder="$t('searchTable.form.selectDefault')"
+                    v-model="formModel.state"
+                    :options="stateOptions"
+                    placeholder="全部"
                   />
                 </a-form-item>
               </a-col>
@@ -194,45 +197,18 @@
               <template #icon>
                 <icon-search />
               </template>
-              {{ $t('searchTable.form.search') }}
+              {{ '查询' }}
             </a-button>
             <a-button @click="reset">
               <template #icon>
                 <icon-refresh />
               </template>
-              {{ $t('searchTable.form.reset') }}
+              {{ '重置' }}
             </a-button>
           </a-space>
         </a-col>
       </a-row>
       <a-divider style="margin-top: 0" />
-      <a-row style="margin-bottom: 16px">
-        <a-col :span="16">
-          <a-space>
-            <a-button type="primary">
-              <template #icon>
-                <icon-plus />
-              </template>
-              {{ $t('searchTable.operation.create') }}
-            </a-button>
-            <a-upload action="/">
-              <template #upload-button>
-                <a-button>
-                  {{ $t('searchTable.operation.import') }}
-                </a-button>
-              </template>
-            </a-upload>
-          </a-space>
-        </a-col>
-        <a-col :span="8" style="text-align: right">
-          <a-button>
-            <template #icon>
-              <icon-download />
-            </template>
-            {{ $t('searchTable.operation.download') }}
-          </a-button>
-        </a-col>
-      </a-row>
       <a-table
         row-key="id"
         :loading="loading"
@@ -242,42 +218,11 @@
         @page-change="onPageChange"
       >
         <template #columns>
-          <a-table-column title="订单号" data-index="id" />
+          <a-table-column title="订单编号" data-index="id" :width="130" />
           <a-table-column title="商品名" data-index="goods.name" />
-          <a-table-column
-            :title="$t('searchTable.columns.contentType')"
-            data-index="contentType"
-          >
+          <a-table-column title="商品图" data-index="coverImgUrl">
             <template #cell="{ record }">
-              <a-space>
-                <a-avatar
-                  v-if="record.contentType === 'img'"
-                  :size="16"
-                  shape="square"
-                >
-                  <img
-                    alt="avatar"
-                    src="//p3-armor.byteimg.com/tos-cn-i-49unhts6dw/581b17753093199839f2e327e726b157.svg~tplv-49unhts6dw-image.image"
-                  />
-                </a-avatar>
-                <a-avatar
-                  v-else-if="record.contentType === 'horizontalVideo'"
-                  :size="16"
-                  shape="square"
-                >
-                  <img
-                    alt="avatar"
-                    src="//p3-armor.byteimg.com/tos-cn-i-49unhts6dw/77721e365eb2ab786c889682cbc721c1.svg~tplv-49unhts6dw-image.image"
-                  />
-                </a-avatar>
-                <a-avatar v-else :size="16" shape="square">
-                  <img
-                    alt="avatar"
-                    src="//p3-armor.byteimg.com/tos-cn-i-49unhts6dw/ea8b09190046da0ea7e070d83c5d1731.svg~tplv-49unhts6dw-image.image"
-                  />
-                </a-avatar>
-                {{ $t(`searchTable.form.contentType.${record.contentType}`) }}
-              </a-space>
+              <img :src="record.goods.coverImgUrl" width="160" />
             </template>
           </a-table-column>
           <a-table-column title="支付方式" data-index="payWay">
@@ -286,24 +231,49 @@
             </template>
           </a-table-column>
           <a-table-column title="购买数量" data-index="payNumber" />
+          <a-table-column title="收货地址" data-index="address">
+            <template #cell="{ record }">
+              <span>
+                {{ formatAddress(record.address) }}
+              </span>
+            </template>
+          </a-table-column>
+          <a-table-column title="收货人" data-index="address">
+            <template #cell="{ record }">
+              <span>
+                {{ formatPerson(record.address) }}
+              </span>
+            </template>
+          </a-table-column>
           <a-table-column title="创建时间" data-index="createdTime" />
           <a-table-column title="状态" data-index="state">
             <template #cell="{ record }">
-              <span v-if="record.status === 'offline'" class="circle"></span>
+              <span v-if="record.state === 0" class="circle"></span>
               <span v-else class="circle pass"></span>
-              {{ $t(`searchTable.form.status.${record.status}`) }}
+              {{ stateMap.get(record.state).label }}
             </template>
           </a-table-column>
           <a-table-column title="操作" data-index="operations">
-            <template #cell>
-              <a-button v-permission="['admin']" type="text" size="small">
-                {{ $t('searchTable.columns.operations.view') }}
+            <template #cell="{ record }">
+              <a-button type="text" size="small" @click="openModal(record)">
+                {{ '填写物流单号' }}
               </a-button>
             </template>
           </a-table-column>
         </template>
       </a-table>
     </a-card>
+    <a-modal
+      v-model:visible="modalVisible"
+      :on-before-ok="handleBeforeOk"
+      unmount-on-close
+      @cancel="handleCancel"
+    >
+      <template #title> 填写物流单号 </template>
+      <div>
+        <a-input v-model="logisticNum"></a-input>
+      </div>
+    </a-modal>
   </div>
 </template>
 

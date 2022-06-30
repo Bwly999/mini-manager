@@ -15,7 +15,7 @@
               <img :src="userInfo.avatar" />
             </a-avatar>
             <a-typography-text>
-              {{ userInfo.name }} {{ $t('monitor.studioPreview.studio') }}
+              {{ 'name' }} {{ $t('monitor.studioPreview.studio') }}
             </a-typography-text>
           </a-space>
         </div>

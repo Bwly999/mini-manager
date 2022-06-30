@@ -46,7 +46,7 @@ export function getGoodsById(goodsId: string) {
 }
 
 export function deleteGoods(id: string) {
-  return axios.delete(`/goods/${id}`);
+  return axios.delete(`/goods/goods/${id}`);
 }
 
 export function uploadFile(file: File) {

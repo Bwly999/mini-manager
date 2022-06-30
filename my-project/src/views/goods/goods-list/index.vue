@@ -82,7 +82,7 @@
   }
 
   function handleAdd() {
-    router.push({ path: 'goods-detail' });
+    router.push({ path: 'onshelf' });
   }
 
   function handleUpdate(row: any) {
@@ -170,13 +170,13 @@
           <el-button type="success" :icon="Position" @click="handleAdd"
             >发布商品</el-button
           >
-          <el-button
+          <!-- <el-button
             type="danger"
             :icon="Delete"
             :disabled="multiple"
             @click="handleDelete"
             >删除</el-button
-          >
+          > -->
         </el-form-item>
       </el-form>
 
@@ -209,24 +209,33 @@
 
             <!-- <el-card> -->
             <div text-left font-bold>
-              <p align="center" inline="!"> 商品名: {{ props.row.name }} </p>
+              <p>
+                商品编号: <a font-normal> {{ props.row.id }} </a>
+              </p>
+              <p>
+                商品名: <a font-normal>{{ props.row.name }}</a>
+              </p>
               <div>
-                <p>封面</p>
-                <img :src="props.row.coverImgUrl" width="40" />
+                <p>封面:</p>
+                <img :src="props.row.coverImgUrl" inline width="160" />
               </div>
               <div label="详情图片" prop="coverImgUrl">
-                <p>详情图片</p>
+                <p>详情图片:</p>
                 <div>
                   <img
                     v-for="(imgUrl, i) in props.row.scollImages"
                     :key="i"
                     :src="imgUrl"
-                    width="40"
+                    width="160"
                   />
                 </div>
               </div>
-              <p> 现价 {{ moneyFormatter(props.row.price) }} </p>
-              <p> 库存: {{ props.row.stock }} </p>
+              <p>
+                现价: <a font-normal>{{ moneyFormatter(props.row.price) }}</a>
+              </p>
+              <p>
+                库存: <a font-normal>{{ props.row.stock }}</a>
+              </p>
             </div>
             <!-- </el-card> -->
           </template>

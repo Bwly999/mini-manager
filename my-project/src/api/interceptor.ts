@@ -13,7 +13,10 @@ if (import.meta.env.VITE_API_BASE_URL) {
   axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 }
 // axios.defaults.baseURL = 'http://139.196.12.152:8080';
-axios.defaults.baseURL = 'http://47.99.200.3:8080';
+// axios.defaults.baseURL = 'http://47.99.200.3:8080';
+axios.defaults.baseURL =
+  'https://springboot-5jpr-2050213-1311358521.ap-shanghai.run.tcloudbase.com';
+// axios.defaults.baseURL = 'http://www.bwly999.top:8080';
 
 axios.interceptors.request.use(
   (config: AxiosRequestConfig) => {
@@ -28,6 +31,7 @@ axios.interceptors.request.use(
       }
       config.headers.Authorization = `${token}`;
     }
+    // config.headers['Access-Control-Allow-Origin'] = '*';
     return config;
   },
   (error) => {
